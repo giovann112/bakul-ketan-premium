@@ -35,26 +35,25 @@ class Location extends Model
     }
 
     public function todayStock(?CarbonInterface $date = null): DailyStock
-{
-    $date = ($date ?? now())->toDateString();
+    {
+        $date = ($date ?? now())->toDateString();
 
-    $isWeekend = \Illuminate\Support\Carbon::parse($date)->isWeekend();
+        $isWeekend = \Illuminate\Support\Carbon::parse($date)->isWeekend();
 
-    $kg = $isWeekend ? $this->weekend_kg : $this->weekday_kg;
+        $kg = $isWeekend ? $this->weekend_kg : $this->weekday_kg;
 
-    $portions = (int) round($kg * $this->portions_per_kg);
+        $portions = (int) round($kg * $this->portions_per_kg);
 
-    return DailyStock::firstOrCreate(
-        [
-            'location_id' => $this->id,
-            'stock_date' => $date,
-        ],
-        [
-            'kg_allocated' => $kg,
-            'total_portions' => $portions,
-            'remaining_portions' => $portions,
-        ]
-    );
-}
+        return DailyStock::firstOrCreate(
+            [
+                'location_id' => $this->id,
+                'stock_date' => $date,
+            ],
+            [
+                'kg_allocated' => $kg,
+                'total_portions' => $portions,
+                'remaining_portions' => $portions,
+            ]
+        );
     }
 }
