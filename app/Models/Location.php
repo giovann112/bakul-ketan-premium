@@ -44,16 +44,20 @@ class Location extends Model
 
         $portions = (int) round($kg * $this->portions_per_kg);
 
-        return DailyStock::firstOrCreate(
-            [
-                'location_id' => $this->id,
-                'stock_date' => $date,
-            ],
-            [
-                'kg_allocated' => $kg,
-                'total_portions' => $portions,
-                'remaining_portions' => $portions,
-            ]
-        );
+        $existing = DailyStock::where('location_id', $this->id)
+    ->whereDate('stock_date', $date)
+    ->first();
+
+if ($existing) {
+    return $existing;
+}
+
+return DailyStock::create([
+    'location_id'        => $this->id,
+    'stock_date'         => $date,
+    'kg_allocated'       => $kg,
+    'total_portions'     => $portions,
+    'remaining_portions' => $portions,
+]);
     }
 }
